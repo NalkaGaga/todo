@@ -1,0 +1,10 @@
+{% extends 'todoapp/base.html' %}
+
+{% block content %}
+<a href="{% url 'todoapp:task_list' %}" class="btn btn-secondary mb-3">Back to Task List</a>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Add Task</button>
+</form>
+{% endblock %}
