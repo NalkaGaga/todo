@@ -1,28 +1,71 @@
 {% extends 'todoapp/base.html' %}
 
 {% block content %}
-<a href="{% url 'todoapp:add_task' %}" class="btn btn-primary mb-3">Add New Task</a>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Task</th>
-            <th>Completed</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for task in tasks %}
-        <tr>
-            <td>{{ task.title }}</td>
-            <td>{% if task.completed %}✅{% else %}❌{% endif %}</td>
-            <td>
-                {% if not task.completed %}
-                <a href="{% url 'todoapp:complete_task' task.id %}" class="btn btn-success btn-sm">Complete</a>
-                {% endif %}
-                <a href="{% url 'todoapp:delete_task' task.id %}" class="btn btn-danger btn-sm">Delete</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="container py-4">
+    <a href="{% url 'todoapp:add_task' %}" class="btn btn-primary mb-4">+ Add New Task</a>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">Task</th>
+                    <th scope="col">Completed</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr id="task-row-{{ task.id }}">
+                    <td>{{ task.title }}</td>
+                    <td>{% if task.completed %}✅{% else %}❌{% endif %}</td>
+                    <td>
+                        <button class="btn btn-info btn-sm" onclick="toggleDetails({{ task.id }})">
+                            View
+                        </button>
+                        {% if not task.completed %}
+                        <a href="{% url 'todoapp:complete_task' task.id %}" class="btn btn-success btn-sm">Complete</a>
+                        {% endif %}
+                        <a href="{% url 'todoapp:delete_task' task.id %}" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+                <tr id="task-detail-{{ task.id }}" class="d-none">
+                    <td colspan="3" id="detail-content-{{ task.id }}"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function toggleDetails(taskId) {
+    const detailRow = document.getElementById(`task-detail-${taskId}`);
+    const detailContent = document.getElementById(`detail-content-${taskId}`);
+
+    // Si déjà visible, on le cache
+    if (!detailRow.classList.contains('d-none')) {
+        detailRow.classList.add('d-none');
+        detailContent.innerHTML = '';
+        return;
+    }
+
+    // Cacher tous les autres détails
+    document.querySelectorAll('tr[id^="task-detail-"]').forEach(row => {
+        row.classList.add('d-none');
+        row.querySelector('td').innerHTML = '';
+    });
+
+    // Afficher celui demandé
+    fetch(`/tasks/${taskId}/detail/`)
+        .then(response => response.text())
+        .then(html => {
+            detailContent.innerHTML = html;
+            detailRow.classList.remove('d-none');
+        })
+        .catch(err => {
+            detailContent.innerHTML = "<div class='text-danger'>Error loading task detail.</div>";
+            detailRow.classList.remove('d-none');
+        });
+}
+</script>
 {% endblock %}

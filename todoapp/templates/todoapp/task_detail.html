@@ -1,0 +1,6 @@
+<!-- todoapp/task_detail.html -->
+<div class="p-3 bg-light border rounded">
+    <p><strong>Description:</strong> {{ task.description|default:"No description." }}</p>
+    <p><strong>Status:</strong> {% if task.completed %}<span class="text-success">Completed ✅</span>{% else %}<span class="text-warning">Incomplete ❌</span>{% endif %}</p>
+    <p><strong>Created:</strong> {{ task.created_at }}</p>
+</div>
