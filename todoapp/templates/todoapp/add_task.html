@@ -1,10 +1,22 @@
 {% extends 'todoapp/base.html' %}
 
 {% block content %}
-<a href="{% url 'todoapp:task_list' %}" class="btn btn-secondary mb-3">Back to Task List</a>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Add Task</button>
-</form>
+<div class="container py-4">
+    <a href="{% url 'todoapp:task_list' %}" class="btn btn-outline-secondary mb-4">
+        ← Back to Task List
+    </a>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Add a New Task</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-success mt-3">Create Task</button>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
